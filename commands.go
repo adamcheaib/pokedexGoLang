@@ -250,7 +250,8 @@ func CatchCommand(configuration *Config, input string) error {
 		fmt.Println("You may now inspect it with the 'inspect' command")
 
 		for i := range aPokemon.Stats {
-			// Now accessible in the InspectCommand function!
+			// Makes it so that I do not have to venture into "StatData" field to access the name!
+			// Check the struct for the JSON-data to understand.
 			aPokemon.Stats[i].StatName = aPokemon.Stats[i].StatData.Name
 		}
 
