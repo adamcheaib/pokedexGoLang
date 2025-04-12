@@ -249,8 +249,9 @@ func CatchCommand(configuration *Config, input string) error {
 		fmt.Println(fmt.Sprintf("%v has now been caught", input))
 		fmt.Println("You may now inspect it with the 'inspect' command")
 
-		for _, stat := range aPokemon.Stats {
-			stat.StatName = stat.StatData.Name
+		for i := range aPokemon.Stats {
+			// Now accessible in the InspectCommand function!
+			aPokemon.Stats[i].StatName = aPokemon.Stats[i].StatData.Name
 		}
 
 		CaughtPokemons[input] = aPokemon
@@ -274,8 +275,8 @@ func InspectCommand(configuration *Config, input string) error {
 	fmt.Println("Weight:", pokemon.Weight)
 	fmt.Println("Stats:")
 
-	for _, stat := range pokemon.Stats {
-		fmt.Println(fmt.Sprintf("-%v: %v", stat.StatData.Name, stat.BaseStat))
+	for i := range pokemon.Stats {
+		fmt.Println(fmt.Sprintf("-%v: %v", pokemon.Stats[i].StatName, pokemon.Stats[i].BaseStat))
 	}
 
 	fmt.Println("Types: ")
