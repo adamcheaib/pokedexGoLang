@@ -9,16 +9,23 @@ func TestCleanInput(test *testing.T) {
 	cases := []struct {
 		input    string
 		expected []string
+		length   int
 	}{
 		{
-			input:    "hello world",
-			expected: []string{"hello"},
+			input:    "hello world rastaman",
+			expected: []string{"hello", "world"},
+			length:   2,
+		},
+		{
+			input:    "Hi",
+			expected: []string{"hi"},
+			length:   1,
 		},
 	}
 
 	for _, currentCase := range cases {
 		actual := CleanInput(currentCase.input)
-		if len(actual) != len(currentCase.expected) {
+		if len(actual) != currentCase.length {
 			test.Errorf("Expected %v, got %v", len(currentCase.expected), len(actual))
 			return
 		}

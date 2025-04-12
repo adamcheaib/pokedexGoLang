@@ -8,7 +8,8 @@ import (
 	"time"
 )
 
-var Cache *pokecache.Cache = pokecache.NewCache(time.Duration(3) * time.Second)
+var Cache *pokecache.Cache = pokecache.NewCache(time.Duration(30) * time.Second)
+var CaughtPokemons = make(map[string]Pokemon)
 
 type PokemonApiData struct {
 	Count    int    `json:"count"`
@@ -18,6 +19,25 @@ type PokemonApiData struct {
 		Name string `json:"name"`
 		Url  string `json:"url"`
 	} `json:"results"`
+}
+
+type Pokemon struct {
+	Name           string `json:"name"`
+	BaseExperience int    `json:"base_experience"`
+	Height         int    `json:"height"`
+	Weight         int    `json:"weight"`
+	Stats          []struct {
+		BaseStat int `json:"base_stat"`
+		StatName string
+		StatData struct {
+			Name string `json:"name"`
+		} `json:"stat"`
+	} `json:"stats"`
+	Types []struct {
+		PokeType struct {
+			Name string `json:"name"`
+		} `json:"type"`
+	} `json:"types"`
 }
 
 var Commands = map[string]CliCommands{}
@@ -55,16 +75,44 @@ func main() {
 		callback:    MapB,
 	}
 
+	Commands["explore"] = CliCommands{
+		name:        "explore",
+		description: "ExploreCommand a specific area and see which Pokémons are there",
+		callback:    ExploreCommand,
+	}
+
+	Commands["catch"] = CliCommands{
+		name:        "catch",
+		description: "Attempt to catch a Pokémon",
+		callback:    CatchCommand,
+	}
+
+	Commands["inspect"] = CliCommands{
+		name:        "inspect",
+		description: "Inspect the Pokémons that you have caught",
+		callback:    InspectCommand,
+	}
+
+	Commands["pokedex"] = CliCommands{
+		name:        "Pokedex",
+		description: "Check the list of all your Pokémons that you have caught",
+		callback:    PokedexCommand,
+	}
+
 	for {
 		fmt.Print("Pokedéx > ")
 		scanner.Scan()
 		input := CleanInput(scanner.Text())
+		var arg string = ""
+		if len(input) >= 2 {
+			arg = input[1]
+		}
 		requestedCommand, exists := Commands[input[0]]
 
 		if !exists {
 			fmt.Println("Command not found")
 		} else {
-			requestedCommand.callback(&navigation)
+			requestedCommand.callback(&navigation, arg)
 		}
 	}
 
